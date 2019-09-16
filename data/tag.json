@@ -1,0 +1,17 @@
+{
+	"tags": [
+		{
+
+			"id": 1,
+			"valeur": "Surf"
+		},
+		{
+			"id": 2,
+			"valeur": "Snow"
+		},
+		{
+			"id" :3,
+			"valeur" : "Rugby"
+		}
+	]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "videotagapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jshint": "^2.10.2",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.7.0",
+    "morgan": "^1.9.1",
+    "needle": "^2.4.0",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.18.4",
+    "sinon": "^7.4.2"
+  },
+  "devDependencies": {
+    "mocha": "^6.2.0"
+  },
+  "scripts": {
+    "test": "mocha --recursive test/"
+  },
+  "author": "",
+  "license": "ISC"
+}

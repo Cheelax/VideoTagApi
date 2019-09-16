@@ -1,0 +1,21 @@
+{
+	"videos": [
+		{
+
+			"id": 1,
+			"name": "SurfTeaser",
+			"description": "Teaser de la session d'hier",
+			"url": "https://www.eurosport.com",
+			"createdat": "2012-04-23",
+			"updatedat": "2019-04-23"
+		},
+		{
+			"id": 2,
+			"name": "SurfTeaser2",
+			"description": "Teaser de la session de janvier",
+			"url": "https://www.eurosport2.com",
+			"createdat": "2012-01-23",
+			"updatedat": "2019-01-23"
+		}
+	]
+}
