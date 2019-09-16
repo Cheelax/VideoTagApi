@@ -41,8 +41,12 @@ exports.delete = (req, res) => {
 exports.findAllByTagId = async function (tagVideoArray) {
 	var result = [];
 	for (var i = 0; i < tagVideoArray.length; i++) {
-		var toFind=tagVideoArray[i].tagid;
-		var found= await Tag.findAll({where: {id: toFind}});
+		var toFind = tagVideoArray[i].tagid;
+		var found = await Tag.findAll({
+			where: {
+				id: toFind
+			}
+		});
 		result.push(found[0].dataValues);
 	}
 	return result;

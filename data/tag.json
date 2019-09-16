@@ -1,6 +1,5 @@
 {
-	"tags": [
-		{
+	"tags": [{
 			"id": 1,
 			"valeur": "Surf"
 		},
@@ -9,8 +8,8 @@
 			"valeur": "Snow"
 		},
 		{
-			"id" :3,
-			"valeur" : "Rugby"
+			"id": 3,
+			"valeur": "Rugby"
 		}
 	]
 }

@@ -53,22 +53,19 @@ exports.findById = async function (req, res) {
 	Video.findByPk(
 			req.params.videoId
 		)
-		.then(async function(video) {
+		.then(async function (video) {
 			//console.log(video)
-			if(video==null || typeof(video)=='undefined')
-			{
+			if (video == null || typeof (video) == 'undefined') {
 				res.send(video);
 				return;
 			}
 			var tagVideobyvideoId = await TagVideoController.findAllByVideoId(req.params.videoId);
 
 			var tagByTagVideo = await TagController.findAllByTagId(tagVideobyvideoId);
-			if(tagByTagVideo!=null )
-			{
+			if (tagByTagVideo != null) {
 				video.dataValues.tags = JSON.stringify(tagByTagVideo);
-			}
-			else{
-				video.dataValues.tags=JSON.stringify([]);
+			} else {
+				video.dataValues.tags = JSON.stringify([]);
 			}
 			res.send(video.dataValues);
 		}).catch(err => {

@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, Sequelize) => {
   const Tag = sequelize.define("tag", {
     id: {

@@ -1,7 +1,7 @@
-module.exports = function(app) {
- 
+module.exports = function (app) {
+
     const tag = require('../controller/tag.controller.js');
- 
+
     // Create a new Tag
     app.post('/api/tag', tag.create);
 
