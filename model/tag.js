@@ -1,5 +1,4 @@
-// * id (clé primaire obligatoire)
-// * valeur (obligatoire, unique)
+
 module.exports = (sequelize, Sequelize) => {
   const Tag = sequelize.define("tag", {
     id: {

@@ -1,5 +1,3 @@
-// * id (clé primaire obligatoire)
-// * valeur (obligatoire, unique)
 module.exports = (sequelize, Sequelize) => {
     const Tagvideo = sequelize.define("tagvideo", {
         videoid: {

@@ -1,7 +1,6 @@
 const db = require('../config/db.config.js');
 const Video = db.videos;
 const Tag = db.tags;
-const tagvideo = db.tagvideo;
 const TagVideoController = require('../controller/tagvideo.controller.js');
 const TagController = require('../controller/tag.controller.js');
 
@@ -19,8 +18,7 @@ exports.create = (req, res) => {
 	}).then(video => {
 		var VideoData = video.dataValues;
 		var TagVideoToCreate = req.body.tags;
-		if( TagVideoToCreate!=null)
-		{
+		if (TagVideoToCreate != null) {
 			for (var i = 0; i < TagVideoToCreate.length; i++) {
 				TagVideoController.create(VideoData.id,
 					TagVideoToCreate[i].id);
@@ -51,46 +49,48 @@ exports.findAll = (req, res) => {
 };
 
 // Find a Video by Id
-exports.findById =async function (req, res){
-	var video=await Video.findByPk(req.params.videoId);
-	
-		var videoId=video.id;
-		var tagVideobyvideoId=await TagVideoController.findAllByVideoId(videoId);
+exports.findById = async function (req, res) {
+	Video.findByPk(
+			req.params.videoId
+		)
+		.then(async function(video) {
+			//console.log(video)
+			if(video==null || typeof(video)=='undefined')
+			{
+				res.send(video);
+				return;
+			}
+			var tagVideobyvideoId = await TagVideoController.findAllByVideoId(req.params.videoId);
 
-		var tagByTagVideo = await TagController.findAllByTagId(tagVideobyvideoId);
-
-		video.dataValues.tags=JSON.stringify(tagByTagVideo);
-
-		res.send(video);
+			var tagByTagVideo = await TagController.findAllByTagId(tagVideobyvideoId);
+			if(tagByTagVideo!=null )
+			{
+				video.dataValues.tags = JSON.stringify(tagByTagVideo);
+			}
+			else{
+				video.dataValues.tags=JSON.stringify([]);
+			}
+			res.send(video.dataValues);
+		}).catch(err => {
+			res.status(500).send("Error -> " + err);
+		});
 };
 
 // Update a Video
 exports.update = (req, res) => {
-	var video = req.body;
 	Video.update({
-		id: req.body.id,
-		name: req.body.name,
-		description: req.body.description,
-		url: req.body.url,
-		createdat: req.body.createdat,
-		updatedat: req.body.updatedat,
+		id: req.body.video.id,
+		name: req.body.video.name,
+		description: req.body.video.description,
+		url: req.body.video.url,
+		createdat: req.body.video.createdat,
+		updatedat: req.body.video.updatedat,
 	}, {
 		where: {
-			id: req.body.id
+			id: req.body.video.id
 		}
-	}).then(() => {
-		var VideoData = video.dataValues;
-		console.log("req.body.tags");
-		console.log(req.body);
-		
-		TagVideoController.updateForVideo(req.body.id,req.body.tags);
-		// var TagVideoToCreate = req.body.tags;
-		// console.log("==================================");
-		// console.log(TagVideoToCreate);
-		// for (var i = 0; i < TagVideoToCreate.length; i++) {
-		// 	TagVideoController.create(VideoData.id,
-		// 		TagVideoToCreate[i].id);
-		// }
+	}).then((video) => {
+		TagVideoController.updateForVideo(req.body.video.id, req.body.tags);
 		res.status(200).send(video);
 	}).catch(err => {
 		res.status(500).send("Error -> " + err);

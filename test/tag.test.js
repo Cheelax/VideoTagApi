@@ -9,108 +9,107 @@ var tagData = require('../data/tag.json');
 const env = require('../config/env.js');
 
 describe('hooks', function () {
-  before(async () => {
-    await CleanDatabase();
-  });
+    beforeEach(async () => {
+        await CleanDatabase();
+    });
 
-  after(async () => {
-    await CleanDatabase();
-  });
+    after(async () => {
+        await CleanDatabase();
+    });
 
-  afterEach(async () => {
-    await CleanDatabase();
-  });
+    describe("Create Tags", async function () {
+        it("should create all Tags", async function () {
+            tagData.tags.forEach(async function (element) {
+                var rep = await needle("post", "http://localhost:8080/api/tag/", element, {
+                    json: true
+                });
+            });
 
-  describe("Create Tags", async function () {
-    it("should create all Tags", async function () {
-      tagData.tags.forEach(async function (element) {
-        var rep = await needle("post", "http://localhost:8080/api/tag/", element, {
-          json: true
+            const rep = await needle('get', 'http://localhost:8080/api/tag/');
+            rep.body.forEach(function (element) {
+                var tagDataexpected = tagData.tags.find(tag => tag.id == element.id);
+                assert.equal(element.id, tagDataexpected.id);
+                assert.equal(element.valeur, tagDataexpected.valeur);
+            });
         });
-      });
 
-      const rep = await needle('get', 'http://localhost:8080/api/tag/');
-      rep.body.forEach(function (element) {
-        var tagDataexpected = tagData.tags.find(tag => tag.id == element.id);
-        assert.equal(element.id, tagDataexpected.id);
-        assert.equal(element.valeur, tagDataexpected.valeur);
-      });
+        it("should not create Tags", async function () {
+            console.log("Normal 500 response");
+            var tag = {
+                ...tagData.tags[1]
+            };
+            tag.valeur = null;
+
+            rep = await needle("post", "http://localhost:8080/api/tag/", tag, {
+                json: true
+            });
+            assert.equal(rep.statusCode, 500);
+
+            tag = {
+                ...tagData.tags[1]
+            };
+        });
     });
 
-    it("should not create Tags", async function () {
-      console.log("Normal 500 response");
-      var tag = {
-        ...tagData.tags[1]
-      };
-      tag.valeur = null;
+    describe("Delete Tags", function () {
+        it("should delete all Tags", async function () {
+            await PopulateDatabase();
 
-      rep = await needle("post", "http://localhost:8080/api/tag/", tag, {
-        json: true
-      });
-      assert.equal(rep.statusCode, 500);
+            var tagId = [];
+            const resToDelete = await needle('get', 'http://localhost:8080/api/tag/');
 
-      tag = {
-        ...tagData.tags[1]
-      };
+            resToDelete.body.forEach(function (element) {
+                tagId.push(element.id);
+            });
+            var toDeletelength = resToDelete.body.length;
+            for (var j = 0; j < toDeletelength; j++) {
+                tagId.push(resToDelete.body[i]);
+            }
+
+            for (var i = 0; i < tagId.length; i++) {
+                await needle("delete", 'http://localhost:8080/api/tag/' + tagId[i]);
+            }
+            const rep = await needle('get', 'http://localhost:8080/api/tag/');
+            console.log(rep.body);
+            assert.equal(rep.body.length, 0, rep.body);
+        });
     });
-  });
-
-  describe("Delete Tags", function () {
-    it("should delete all Tags", async function () {
-      await PopulateDatabase();
-
-      var tagId = [];
-      const toDelete = await needle('get', 'http://localhost:8080/api/tag/');
-      var resToDelete = toDelete.body;
-      assert.equal(resToDelete.length, tagData.tags.length);
-
-      resToDelete.forEach(function (element) {
-        tagId.push(element.id);
-      });
-
-      for (var i = 0; i < tagId.length; i++) {
-        await needle("delete", 'http://localhost:8080/api/tag/' + tagId[i]);
-      }
-      const rep = await needle('get', 'http://localhost:8080/api/tag/');
-      assert.equal(rep.body.length, 0, rep.body);
-    });
-  });
 });
 
 async function CleanDatabase() {
-  var videoId = [];
-  const repVideo = await needle('get', 'http://localhost:8080/api/video/');
-  repVideo.body.forEach(async function (element) { 
-    videoId.push(element.id);
-  });
+    var videoId = [];
+    const repVideo = await needle('get', 'http://localhost:8080/api/video/');
+    repVideo.body.forEach(async function (element) {
+        videoId.push(element.id);
+    });
 
-  videoId.forEach(async function (element) {
-    await needle("delete", 'http://localhost:8080/api/video/' + element);
-  });
+    videoId.forEach(async function (element) {
+        await needle("delete", 'http://localhost:8080/api/video/' + element);
+    });
 
-  var tagId = [];
-  const repTag = await needle('get', 'http://localhost:8080/api/tag/');
-  repTag.body.forEach(async function (element) {
-    tagId.push(element.id);
-  });
+    var tagId = [];
+    const resToDelete = await needle('get', 'http://localhost:8080/api/tag/');
 
-  tagId.forEach(async function (element) {
-    await needle("delete", 'http://localhost:8080/api/tag/' + element);
-  });
-
+    var toDeletelength = resToDelete.body.length;
+    for (var j = 0; j < toDeletelength; j++) {
+        tagId.push(resToDelete.body[i]);
+    }
+    console.log("tagId");
+    console.log(tagId);
+    for (var i = 0; i < tagId.length; i++) {
+        await needle("delete", 'http://localhost:8080/api/tag/' + tagId[i]);
+    }
 }
 
 async function PopulateDatabase() {
 
-  await tagData.tags.forEach(async function (element) {
-    await needle("post", "http://localhost:8080/api/tag/", element);
+    await tagData.tags.forEach(async function (element) {
+        await needle("post", "http://localhost:8080/api/tag/", element);
+    });
 
-  });
-
-  await videoData.videos.forEach(async function (element) {
-    element.tags = [];
-    element.tags.push(tagData.tags[0]);
-    await needle("post", "http://localhost:8080/api/video/", element);
-  });
-  return;
+    await videoData.videos.forEach(async function (element) {
+        element.tags = [];
+        element.tags.push(tagData.tags[0]);
+        await needle("post", "http://localhost:8080/api/video/", element);
+    });
 }

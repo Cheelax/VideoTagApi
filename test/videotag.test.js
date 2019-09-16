@@ -1,125 +1,98 @@
-// var chai = require('chai');
-// var expect = chai.expect;
-// var assert = require('assert');
-// const needle = require('needle');
+var chai = require('chai');
+var assert = require('assert');
+const needle = require('needle');
+var videoData = require('../data/video.json');
+var tagData = require('../data/tag.json');
 
-// var server = require('../server.js');
-// var videoData = require('../data/video.json');
-// var tagData = require('../data/tag.json');
-// const env = require('../config/env.js');
+describe('hooks', function () {
+    beforeEach(async () => {
+        await CleanDatabase();
+    });
 
-// describe('hooks', function () {
-//   beforeEach(async () => {
-//     await CleanDatabase();
-//   });
+    describe("Get Link", function () {
+        it("should return all Link", async function () {
+            await PopulateDatabase();
 
-//   after(async () => {
-//     //await CleanDatabase();
-//   });
+            const allVideo = await needle('get', 'http://localhost:8080/api/video/');
+            allVideo.body.forEach(async function (element) {
 
-//   afterEach(async () => {
-//     //await CleanDatabase();
-//   });
+                const rep = await needle('get', 'http://localhost:8080/api/video/' + element.id);
 
-//   describe("Get Link", function () {
-//     it("should return all Link", async function () {
-//       await PopulateDatabase();
+                var tagObjects = JSON.parse(rep.body.tags);
 
-//       const allVideo = await needle('get', 'http://localhost:8080/api/video/');
-//       allVideo.body.forEach(async function (element) {
+                tagObjects.forEach(function (element) {
 
-//         const rep = await needle('get', 'http://localhost:8080/api/video/' + element.id);
-//         var tagObjects = JSON.parse(rep.body.tags);
-//         console.log("tagObjects");
-//         console.log(tagObjects);
-//         tagObjects.forEach(function (element) {
-//         console.log(element);
+                    assert.equal(JSON.stringify(element), JSON.stringify(tagData.tags[0]));
+                });
+            });
+        });
+        it("should return no Link", async function () {
+            await needle("post", 'http://localhost:8080/api/video/', videoData.videos[0]);
+            const rep = await needle('get', 'http://localhost:8080/api/video/' + 1);
+            var res = rep.body;
+            assert.equal(res.tags, JSON.stringify([]), res);
+        });
+    });
 
-//           assert.equal(JSON.stringify(element), JSON.stringify(tagData.tags[0]));
-//         });
-//       });
-//     });
-//     it("should return no Link", async function () {
-//       await needle("post", 'http://localhost:8080/api/video/', videoData.videos[0]);
-//       const rep = await needle('get', 'http://localhost:8080/api/video/'+ 1);
-//       var res = rep.body;
-//        assert.equal(res.tags, JSON.stringify([]), res);
-//     });
-//   });
+    describe("Delete Link", function () {
+        it("should delete all Links", async function () {
+            await PopulateDatabase();
 
-//   describe("Delete Link", function () {
-//     it("should delete all Links", async function () {
-//       await PopulateDatabase();
+            const allVideo = await needle('get', 'http://localhost:8080/api/video/');
+            allVideo.body.forEach(async function (element) {
+                var rep = await needle('get', 'http://localhost:8080/api/video/' + element.id);
+                rep.body.tags = '[]';
+                const video = {
+                    ...rep.body
+                };
 
-//       const allVideo = await needle('get', 'http://localhost:8080/api/video/');
-//       allVideo.body.forEach(async function (element) {
-//         const rep = await needle('get', 'http://localhost:8080/api/video/' + element.id);
-//         var tagObjects = JSON.parse(rep.body.tags);
-//         console.log(tagObjects);
-//         rep.body.tags='';
-//         const rep2 = await needle('put', 'http://localhost:8080/api/video/'+element.id, rep.body);
-//         console.log("rep2.body");
+                await needle('put', 'http://localhost:8080/api/video/' + element.id, {
+                    video
+                }, {
+                    json: true
+                });
 
-//         console.log(rep2.body);
-//         const repDelete = await needle('get', 'http://localhost:8080/api/video/' + element.id);
-//         console.log(repDelete.body);
+                var repDelete = await needle('get', 'http://localhost:8080/api/video/' + element.id);
+                assert.equal(repDelete.body.tags, JSON.stringify([]));
 
+            });
+        });
+        // it("should delete one link", async function () {
+        //     await PopulateDatabase();
+        // });
+    });
+});
 
+async function CleanDatabase() {
+    var videoId = [];
+    const repVideo = await needle('get', 'http://localhost:8080/api/video/');
+    repVideo.body.forEach(async function (element) {
+        videoId.push(element.id);
+    });
 
-        
-//       });
+    videoId.forEach(async function (element) {
+        await needle("delete", 'http://localhost:8080/api/video/' + element);
+    });
 
-//       // var videoId = [];
-//       // const toDelete = await needle('get', 'http://localhost:8080/api/video/');
-//       // toDelete.body.forEach(function (element) {
-//       //   videoId.push(element.id);
-//       // });
+    var tagId = [];
+    const repTag = await needle('get', 'http://localhost:8080/api/tag/');
+    repTag.body.forEach(async function (element) {
+        tagId.push(element.id);
+    });
 
-//       // for (var i = 0; i < videoId.length; i++) {
-//       //   await needle("delete", 'http://localhost:8080/api/video/' + videoId[i]);
-//       // }
+    tagId.forEach(async function (element) {
+        await needle("delete", 'http://localhost:8080/api/tag/' + element);
+    });
+}
 
-//       // const rep = await needle('get', 'http://localhost:8080/api/video/');
-//       // var res = rep.body;
-//       // assert.equal(res.length, 0, rep.body);
-//     });
-//   });
-// });
+async function PopulateDatabase() {
 
-// async function CleanDatabase() {
-//   var videoId = [];
-//   const repVideo = await needle('get', 'http://localhost:8080/api/video/');
-//   repVideo.body.forEach(async function (element) {
-//     videoId.push(element.id);
-//   });
+    for (var i = 0; i < tagData.tags.length; i++) {
+        await needle("post", 'http://localhost:8080/api/tag/', tagData.tags[i]);
+    }
 
-//   videoId.forEach(async function (element) {
-//     await needle("delete", 'http://localhost:8080/api/video/' + element);
-//   });
-
-//   var tagId = [];
-//   const repTag = await needle('get', 'http://localhost:8080/api/tag/');
-//   repTag.body.forEach(async function (element) {
-//     tagId.push(element.id);
-//   });
-
-//   tagId.forEach(async function (element) {
-//     await needle("delete", 'http://localhost:8080/api/tag/' + element);
-//   });
-
-// }
-
-// async function PopulateDatabase() {
-
-//   for (var i = 0; i < tagData.tags.length; i++) {
-//     await needle("post", 'http://localhost:8080/api/tag/', tagData.tags[i]);
-//   }
-
-//   for (var j = 0; j < videoData.videos.length; j++) {
-//     videoData.videos[j].tags = [];
-//     videoData.videos[j].tags.push(tagData.tags[0]);
-
-//     await needle("post", 'http://localhost:8080/api/video/', videoData.videos[j]);
-//   }
-//   return;
-// }
+    for (var j = 0; j < videoData.videos.length; j++) {
+        await needle("post", 'http://localhost:8080/api/video/', videoData.videos[j]);
+    }
+    return;
+}

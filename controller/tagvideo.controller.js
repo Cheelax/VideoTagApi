@@ -9,20 +9,17 @@ exports.create = (videoid, tagid) => {
             videoid: videoid,
             tagid: tagid,
         }).catch(err => {
-            //console.log(err);
+            
         });
     }
 };
 
 exports.updateForVideo = (videoid,tagList) => {
-    console.log(videoid,tagList);
     if ( typeof tagList == 'undefined' || !tagList )
     {
         this.deleteByVideoId(videoid);
-        
     }
-    else
-    {
+    else {
         this.deleteByVideoId(videoid);
         tagList.forEach(element => {
             this.create(videoid,element.id);
@@ -46,9 +43,7 @@ exports.deleteByVideoId = (videoid) => {
     TagVideo.destroy({
         where: { videoid: videoid}
     }).then(() => {
-        //res.status(200).send('Tag has been deleted!');
     }).catch(err => {
-        //res.status(500).send("Error -> " + err);
     });
 };
 
