@@ -1,21 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
-
-@tbelqdx
-2,850
-89,38244,783github/gitignore
- Code Pull requests 117 Actions Projects 0 Security Insights
-gitignore/Node.gitignore
-@byeonggukgong byeonggukgong Update Node.gitignore (#2934)
-e58b3e0 on May 12
-@stuartpb@shiftkey@TennyZhuang@venatoria@ro31337@melonmanchan@gouthamve@jucrouzet@cheddar@arcresu@kesoji@tejashah88@sroberts@SimonSiefke@segayuu@Richienb@rgbkrk@rsolomo@peat@noinkling@ndelvalle@MikeRalphson@lmedson@unixchad@kerimdzhanov@joreyaesh
-89 lines (63 sloc)  1.28 KB
-
 # Logs
 logs
 *.log
@@ -104,15 +86,3 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
-© 2019 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About

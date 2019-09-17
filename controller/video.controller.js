@@ -6,7 +6,6 @@ const TagController = require('../controller/tag.controller.js');
 
 // Post a Video
 exports.create = (req, res) => {
-	var Tags = [];
 
 	Video.create({
 		id: req.body.id,
@@ -24,7 +23,7 @@ exports.create = (req, res) => {
 					TagVideoToCreate[i].id);
 			}
 		}
-		res.send(video + Tags);
+		res.send(video);
 	}).catch(err => {
 		res.status(500).send("Error -> " + err);
 	});
@@ -48,13 +47,31 @@ exports.findAll = (req, res) => {
 	});
 };
 
+// FETCH all Videos
+exports.findByTag = async function (req, res)  {
+	var id= parseInt(req.params.tagId);
+	Video.findAll({
+		include: [{
+			model: Tag,
+			as: 'tags',
+			attributes: ['id', 'valeur'],
+			through: {
+				attributes: ['videoid', 'tagid'],
+			}
+		}]
+	}).then(videos => {
+		res.send(videos);
+	}).catch(err => {
+		res.status(500).send("Error -> " + err);
+	});
+};
+
 // Find a Video by Id
 exports.findById = async function (req, res) {
 	Video.findByPk(
 			req.params.videoId
 		)
 		.then(async function (video) {
-			//console.log(video)
 			if (video == null || typeof (video) == 'undefined') {
 				res.send(video);
 				return;

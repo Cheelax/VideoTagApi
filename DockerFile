@@ -15,7 +15,8 @@ COPY . .
 
 EXPOSE 8080
 
-RUN npm test
+RUN npm start
+#RUN npm test
 # If you are building your code for production
 # RUN npm ci --only=production
 

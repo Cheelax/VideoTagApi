@@ -11,6 +11,8 @@ module.exports = function (app) {
     // Retrieve a single Video by Id
     app.get('/api/video/:videoId', video.findById);
 
+    app.get('/api/videobytag/:tagId', video.findByTag);
+
     // Update a Video with Id
     app.put('/api/video/:videoId', video.update);
 
