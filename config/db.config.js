@@ -20,7 +20,7 @@ db.videos.belongsToMany(db.tags, {
     through: {
         model: db.tagvideo
     },
-    foreignKey: "tagid"
+    foreignKey: "videoid"
 });
 
 db.tags.belongsToMany(db.videos, {
@@ -28,7 +28,7 @@ db.tags.belongsToMany(db.videos, {
     through: {
         model: db.tagvideo
     },
-    foreignKey: "videoid"
+    foreignKey: "tagid"
 });
 
 module.exports = db;
