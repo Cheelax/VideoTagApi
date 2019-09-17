@@ -48,7 +48,6 @@ exports.findAll = (req, res) => {
 };
 
 exports.findAllWithPagination = (req, res) => {
-	console.log(req.params);
 	Video.findAll({offset: req.params.offset, limit: req.params.limit,
 		include: [{
 			model: Tag,
