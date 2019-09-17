@@ -180,8 +180,10 @@ describe('video hooks', function () {
             await PopulateDatabase();
             const firstElement = await needle('get', 'http://localhost:49160/api/video/0/1');
             const secondElement = await needle('get', 'http://localhost:49160/api/video/1/1');
-            assert.equal(firstElement.body.id, videoData.videos[0].id);
-            assert.equal(secondElement.body.name, videoData.videos[1].id);
+            var firstId=firstElement.body[0].id;
+            var secondId=secondElement.body[0].id;
+            assert.equal(firstId, videoData.videos[0].id);
+            assert.equal(secondId, videoData.videos[1].id);
         });
     });
 });
