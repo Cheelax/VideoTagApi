@@ -47,6 +47,23 @@ exports.findAll = (req, res) => {
 	});
 };
 
+exports.findAllWithPagination = (req, res) => {
+	Video.findAll({offset: req.params.offset, limit: req.params.limit,
+		include: [{
+			model: Tag,
+			as: 'tags',
+			attributes: ['id', 'valeur'],
+			through: {
+				attributes: ['videoid', 'tagid'],
+			}
+		}]
+	}).then(videos => {
+		res.send(videos);
+	}).catch(err => {
+		res.status(500).send("Error -> " + err);
+	});
+};
+
 // FETCH all Videos
 exports.findByTag = async function (req, res)  {
 	var id= parseInt(req.params.tagId);

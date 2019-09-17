@@ -175,6 +175,15 @@ describe('video hooks', function () {
             assert.equal(putRes.statusCode, 500);
         });
     });
+    describe("Get Videos With pagination", function () {
+        it("should get videos with pagination", async function () {
+            await PopulateDatabase();
+            const firstElement = await needle('get', 'http://localhost:49160/api/video/0/1');
+            const secondElement = await needle('get', 'http://localhost:49160/api/video/1/1');
+            assert.equal(firstElement.body.id, videoData.videos[0].id);
+            assert.equal(secondElement.body.name, videoData.videos[1].id);
+        });
+    });
 });
 
 async function CleanDatabase() {
@@ -201,8 +210,7 @@ async function CleanDatabase() {
 }
 
 async function PopulateDatabase() {
-    await videoData.videos.forEach(async function (element) {
-        await needle("post", "http://localhost:49160/api/video/", element);
-    });
-    return;
+    for (var j = 0; j < videoData.videos.length; j++) {
+        await needle("post", "http://localhost:49160/api/video/", videoData.videos[j]);
+    }
 }
