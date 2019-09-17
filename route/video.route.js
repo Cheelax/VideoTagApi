@@ -8,6 +8,9 @@ module.exports = function (app) {
     // Retrieve all Video
     app.get('/api/video', video.findAll);
 
+    // Retrieve all Video
+    app.get('/api/video/:offset/:limit', video.findAllWithPagination);
+
     // Retrieve a single Video by Id
     app.get('/api/video/:videoId', video.findById);
 
